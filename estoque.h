@@ -17,9 +17,11 @@ struct lista{
 // Define a lista
 typedef struct lista Lista;
 
+// Inicializa a leitura do arquivo
+void menu();
+
 // Cria um novo medicamento
-Medicamento* CriaMedicamento(FILE* fp, char* nome, int codigo, 
-    float valor, int* data_de_validade);
+Medicamento* CriaMedicamento(FILE* fp, char* nome, int codigo, float valor, int* data_de_validade);
 
 // Criar a lista para armazenar os medicamentps
 Lista* CriaLista();
