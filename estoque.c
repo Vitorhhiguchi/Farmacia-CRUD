@@ -8,7 +8,7 @@ void menu(){
     Medicamento *med = NULL, medicamentotemp;
     char info[20];
     FILE *arq_entrada = fopen("entrada.txt", "r");
-    FILE *arq_saida = fopen("saida.txt", "r");
+    FILE *arq_saida = fopen("saida.txt", "w");
 
     //Verificando se o arquivo existe
     if(arq_entrada == NULL){
@@ -91,7 +91,7 @@ void menu(){
 
 
 // Cria um novo medicamento
-Medicamento* CriaMedicamento(FILE* fp, char* nome, int codigo, float valor, int* data_de_validade){
+Medicamento* CriaMedicamento(char* nome, int codigo, float valor, int* data_de_validade){
     Medicamento *novo = (Medicamento*) malloc(sizeof(Medicamento));
     
     strcpy(novo->nome, nome); // Copiando o nome lido para o medicamento
@@ -129,9 +129,10 @@ Lista* RetiraListaMedicamento(FILE* fp, Lista* l, int id_medicamneto){
         p = p->prox;
     }
 
-    if(p == NULL)
-        fprinf(fp, "MEDICAMENTO NAO ENCONTRADO\n");
+    if(p == NULL){
+        fprintf(fp, "MEDICAMENTO NAO ENCONTRADO\n");
         return l;
+    }
 
     if(ant == NULL){
         l = p->prox;
@@ -140,11 +141,27 @@ Lista* RetiraListaMedicamento(FILE* fp, Lista* l, int id_medicamneto){
         ant->prox = p->prox;
     }
 
-    fprintf(fp, "MEDICAMENTO %s %d, RETIRADO COM SUCESSO!\n", p->m->nome, id_medicamneto);
+    fprintf(fp, "MEDICAMENTO %s %d, RETIRADO COM SUCESSO\n", p->m->nome, id_medicamneto);
 
     free(p->m);
     free(p);
     return l;
+}
+
+//Atualiza o preço do medicamneto
+void AtualizaPreco (FILE *fp, Lista *p, int id_medicamento, float preco){//atualiza preco do medicamento
+    int encontrou = 0;
+    for(Lista *aux = p; aux != NULL; aux = aux->prox){
+        if(aux->m->codigo == id_medicamento){
+            aux->m->valor = preco;
+            fprintf(fp, "PRECO ATUALIZADO %s %d %.2f\n", aux->m->nome, aux->m->codigo, aux->m->valor);
+            encontrou = 1;
+        }
+    }
+
+    if(encontrou == 0){
+        fprintf(fp, "MEDICAMENTO ATUALIZAR PRECO NAO ENCONTRADO\n");
+    }
 }
 
 // Verifica se um medicamento esta presente em uma determinada lista
@@ -167,19 +184,19 @@ int VerificaListaValidade(FILE* fp, Lista* p, int* data){
     int encontrou = 0;
     for(Lista *aux; aux != NULL; aux = aux->prox){
         if(aux->m->data[2] < data[2]){
-            fprintf(fp, "MEDICAMENTO %s %s VENCIDO\n", aux->m->nome, aux->m->codigo);
+            fprintf(fp, "MEDICAMENTO %s %d VENCIDO\n", aux->m->nome, aux->m->codigo);
             encontrou = 1;
         }
         if(aux->m->data[2] == data[2] && aux->m->data[1] < data[1]){
-            fprintf(fp, "MEDICAMENTO %s %s VENCIDO\n", aux->m->nome, aux->m->codigo);
+            fprintf(fp, "MEDICAMENTO %s %d VENCIDO\n", aux->m->nome, aux->m->codigo);
             encontrou = 1;
         }
         if(aux->m->data[2] == data[2] && aux->m->data[1] == data[1] && aux->m->data[0] < data[0]){
-            fprintf(fp, "MEDICAMENTO %s %s VENCIDO\n", aux->m->nome, aux->m->codigo);
+            fprintf(fp, "MEDICAMENTO %s %d VENCIDO\n", aux->m->nome, aux->m->codigo);
             encontrou = 1;
         }
     }
-    if(!encontrou){
+    if(encontrou == 0){
         fprintf(fp, "MEDICAMENTO NAO ENCONTRADO NA LISTA\n");
     }
 }
@@ -228,4 +245,16 @@ Lista* OrdenaListaVencimento(Lista* p){
         }
     }
     return p;
+}
+
+void fim(Lista *l){
+    Lista *aux;
+    Lista *p = l;
+    while(p != NULL){
+        aux = p->prox; // guarda referencia para o proximo elemento
+        free(p->m); //libera memoria apontada para medicamentos
+        free(p); // libera memoria apontada para p
+        p = aux; // faz aponta p para o proximo
+    }
+    exit(0);
 }

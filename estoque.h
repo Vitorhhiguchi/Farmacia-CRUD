@@ -21,7 +21,7 @@ typedef struct lista Lista;
 void menu();
 
 // Cria um novo medicamento
-Medicamento* CriaMedicamento(FILE* fp, char* nome, int codigo, float valor, int* data_de_validade);
+Medicamento* CriaMedicamento(char* nome, int codigo, float valor, int* data_de_validade);
 
 // Criar a lista para armazenar os medicamentps
 Lista* CriaLista();
@@ -31,6 +31,9 @@ Lista* InsereListaMedicamento(FILE* fp, Lista* l, Medicamento* m);
 
 // Retirar um medicamento de uma determinada lista
 Lista* RetiraListaMedicamento(FILE* fp, Lista* l, int id_medicamneto);
+
+/* Atualiza Preco do produto */
+void AtualizaPreco (FILE *fp, Lista *p, int id_medicamento, float preco);
 
 // Verifica se um medicamento esta presente em uma determinada lista
 int VerificaListaMedicamento(FILE* fp, Lista* p, int id_medicamento);
@@ -46,3 +49,6 @@ Lista* OrdenaListaValor(Lista* p);
 
 // Ordena a lista pela data de validade
 Lista* OrdenaListaVencimento(Lista* p);
+
+// Libera a lista
+void fim(Lista *l);
