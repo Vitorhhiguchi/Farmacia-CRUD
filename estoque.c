@@ -182,7 +182,7 @@ int VerificaListaMedicamento(FILE* fp, Lista* p, int id_medicamento){
 // Verifica se um medicamento está vencido na lista 
 int VerificaListaValidade(FILE* fp, Lista* p, int* data){
     int encontrou = 0;
-    for(Lista *aux; aux != NULL; aux = aux->prox){
+    for(Lista *aux = p; aux != NULL; aux = aux->prox){
         if(aux->m->data[2] < data[2]){
             fprintf(fp, "MEDICAMENTO %s %d VENCIDO\n", aux->m->nome, aux->m->codigo);
             encontrou = 1;
@@ -210,18 +210,60 @@ void ImprimeListaMedicamentos(FILE* fp, Lista* p){
 }
 
 // Ordena a lista pelo valor do medicamento
-Lista* OrdenaListaValor(Lista* p){
-    for(Lista *i = p; i != NULL; i = i->prox){
-        for(Lista *j = p; j != NULL; j = j->prox){
-            if(i->m->valor < j->m->valor){
-                Medicamento *aux = i->m;
-                i->m = j->m;
-                j->m = aux;
+// Lista* OrdenaListaValor(Lista* p){
+//     for(Lista *i = p; i != NULL; i = i->prox){
+//         for(Lista *j = p; j != NULL; j = j->prox){
+//             if(i->m->valor < j->m->valor){
+//                 Medicamento *aux = i->m;
+//                 i->m = j->m;
+//                 j->m = aux;
+//             }
+//         }
+//     }
+//     return p;
+// }
+
+// SelectionSort
+// Lista* OrdenaListaValor(Lista* p) {
+//     for (Lista *i = p; i != NULL; i = i->prox) {
+//         Lista *min = i;
+//         for (Lista *j = i->prox; j != NULL; j = j->prox) {
+//             if (j->m->valor < min->m->valor) {
+//                 min = j;
+//             }
+//         }
+//         if (min != i) {
+//             Medicamento *aux = i->m;
+//             i->m = min->m;
+//             min->m = aux;
+//         }
+//     }
+//     return p;
+// }
+
+//Bubblesort
+Lista* OrdenaListaValor(Lista* p) {
+    if (p == NULL) return p;
+
+    int trocou;
+    do {
+        trocou = 0;
+        Lista *atual = p;
+        while (atual->prox != NULL) {
+            if (atual->m->valor > atual->prox->m->valor) {
+                // Troca os medicamentos
+                Medicamento *aux = atual->m;
+                atual->m = atual->prox->m;
+                atual->prox->m = aux;
+                trocou = 1;
             }
+            atual = atual->prox;
         }
-    }
+    } while (trocou);
+    
     return p;
 }
+
 
 // Ordena a lista pela data de validade
 Lista* OrdenaListaVencimento(Lista* p){
